@@ -17,4 +17,5 @@ int main()
   printf("v[] second value: %f \n", v[1]);
   printf("v[] second value using pointer: %f \n", *(v_P+1));
 
+  return 0;
 } 
