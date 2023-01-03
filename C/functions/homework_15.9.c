@@ -53,5 +53,5 @@ void main()
   }
   // calculate the diagonals difference
   double difference = absDiagonalsDifference(r, matrix);
-  printf("The difference between the primary and the secondary diagonal's values average is: %f\n", difference);
+  printf("The difference between the primary and the secondary diagonal's values average is: %lf\n", difference);
 }
