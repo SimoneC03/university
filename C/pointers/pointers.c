@@ -6,7 +6,9 @@ int main()
   int *num_P = &num;
   printf("int num = 200\n");
   printf("num value: %d \n", num);
-  printf("num pointer address: %p \n", num_P);
+  printf("num address: %p \n", &num);
+  printf("num address: %p \n", num_P);
+  printf("num pointer address: %p \n", &num_P);
   printf("num pointer value: %d \n\n", *num_P);
 
   double v[] = {21,3,4,2,453.24};
