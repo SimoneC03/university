@@ -11,12 +11,13 @@ typedef struct
 } Arguments;
 
 Arguments checkArgs(int, char **);
+char* genString(int, char, char);
 
 void main(int argc, char *argv[])
 {
   Arguments arguments = checkArgs(argc, argv);
   int M = arguments.M, N = arguments.N, K = arguments.k;
-  int j, i, k;
+  int j, i;
   char ***S = malloc(M * sizeof(char **));
 
   for (j = 0; j < M; j++)
@@ -25,10 +26,8 @@ void main(int argc, char *argv[])
     for (i = 0; i < N; i++)
     {
       S[j][i] = malloc(sizeof(char) * K);
-      for (k = 0; k < K; k++)
-      {
-        S[j][i][k] = 'A' + (random() % 26);
-      }
+      char *randomStr = genString(K, 'a', 'z');
+      strcpy(S[j][i], randomStr);
     }
   }
 
@@ -36,11 +35,7 @@ void main(int argc, char *argv[])
   for (j = 0; j < M; j++)
   {
     for (i = 0; i < N; i++)
-    {
-      for (k = 0; k < K; k++)
-        printf("%c", S[j][i][k]);
-      printf("\n");
-    }
+      printf("%s\n", S[j][i]);
     printf("\n");
   }
 
@@ -68,4 +63,14 @@ Arguments checkArgs(int argc, char **argv)
     fprintf(stderr, "%s", "Invalid arguments\n");
     exit(0);
   }
+}
+
+char* genString(int length, char start, char end) {
+  char* str = malloc(sizeof(char)*length);
+  int i;
+  int st = (int)(start);
+  int en = (int)(end);
+  for(i = 0; i < length; i++)
+    str[i] = (rand()%(en-st))+st;
+  return str;
 }
