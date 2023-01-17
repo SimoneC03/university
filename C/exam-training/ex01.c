@@ -55,7 +55,7 @@ Arguments checkArgs(int argc, char **argv)
   if (k >= 10 && k <= 15 && w >= 'a' && w <= 'z' && N >= 4 && N <= 8 && M >= 4 && M <= 8)
   {
     Arguments arguments = {k, w, N, M};
-    printf("Insert: %d for k, %c for w, %d for N and %d for M", arguments.k, arguments.w, arguments.N, arguments.M);
+    printf("\nInsert: %d for k, '%c' for w, %d for N and %d for M\n\n", arguments.k, arguments.w, arguments.N, arguments.M);
     return arguments;
   }
   else
@@ -69,7 +69,7 @@ char* genString(int length, char start, char end) {
   char* str = malloc(sizeof(char)*length);
   int i;
   int st = (int)(start);
-  int en = (int)(end);
+  int en = ((int)(end)) + 1;
   for(i = 0; i < length; i++)
     str[i] = (rand()%(en-st))+st;
   return str;
