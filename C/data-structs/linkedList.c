@@ -12,6 +12,7 @@ void printList(Node **);
 void insertAfter(Node *, int);
 void removeElement(Node **, int);
 int listLength(Node **);
+void deallocateList(Node **);
 
 void main() {
   Node *root = NULL;
@@ -22,6 +23,7 @@ void main() {
   removeElement(&root, 4);
   printList(&root);
   printf("List length: %d\n", listLength(&root));
+  deallocateList(&root);
 }
 
 void insertEnd(Node **root, int value) {
@@ -35,9 +37,8 @@ void insertEnd(Node **root, int value) {
     return;
   }
   Node *current = *root;
-  while (current->next != NULL) {
+  while (current->next != NULL)
     current = current->next;
-  }
   current->next = newNode;
 }
 
@@ -85,4 +86,16 @@ int listLength(Node **root) {
     current = current->next;
   }
   return c;
+}
+
+void deallocateList(Node **root) {
+  if(*root == NULL)
+    return;
+  Node *current = *root;
+  while(current != NULL) {
+    Node *temp = current;
+    current = current->next;
+    free(temp);
+  }
+  *root = NULL;
 }
