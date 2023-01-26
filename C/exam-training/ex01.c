@@ -4,10 +4,10 @@
 
 typedef struct
 {
-  int k;
+  short int k;
   char w;
-  int N;
-  int M;
+  short int N;
+  short int M;
 } Arguments;
 
 Arguments checkArgs(int, char **);

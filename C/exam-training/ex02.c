@@ -3,7 +3,7 @@
 #include <string.h>
 
 typedef struct {
-  int N;
+  short int N;
   char w;
 } Arguments;
 
