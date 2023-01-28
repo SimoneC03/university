@@ -7,37 +7,44 @@ typedef struct {
   float x, y;
 } Arguments;  
 
+typedef struct {
+  double *arr;
+  int counter;
+  int length;
+} Stack;
+
+
 Arguments checkArgs(int, char **);
 double genDouble(double, double);
-void push(double[], double, int *, int);
-double pop(double[], int *);
-void printStack(double[], int);
+void push(Stack *, double);
+double pop(Stack *);
+void printStack(Stack *);
 
-void printStack(double arr[], int length) {
-  for(int i = 0; i < length; i++) 
-    printf("stack[%d] = %lf\n", i, arr[i]);
+void printStack(Stack *stack) {
+  for(int i = 0; i < stack->length; i++) 
+    printf("stack[%d] = %lf\n", i, stack->arr[i]);
 }
 
-double pop(double arr[], int *counter) {
-  if(*counter < 0) {
+double pop(Stack *stack) {
+  if(stack->counter < 0) {
     printf("Stack is empty.");
     return -1;
   }
-  int i = *counter;
-  double temp = arr[i];
-  arr[i] = 0;
-  *counter -= 1;
+  int i = stack->counter;
+  double temp = stack->arr[i];
+  stack->arr[i] = 0;
+  stack->counter -= 1;
   return temp;
 }
 
-void push(double arr[], double value, int *counter, int length) {
-  *counter += 1;
-  int i = *counter; 
-  if(i >= length - 1) {
+void push(Stack *stack, double value) {
+  stack->counter += 1;
+  int i = stack->counter; 
+  if(i >= stack->length - 1) {
     printf("Stack is full. Cannot insert %lf", value);
     return;
   }
-  arr[i] = value;
+  stack->arr[i] = value;
 }
 
 double genDouble(double max, double min) {
@@ -69,13 +76,13 @@ void main(int argc, char *argv[]) {
   int N = arguments.N, M = arguments.M;
   float x = arguments.x, y = arguments.y;
   int length = N/2;
-  double stack[length];
-  int counter = -1;
-  push(stack, genDouble(y, x), &counter, length);
-  push(stack, genDouble(y, x), &counter, length);
-  push(stack, genDouble(y, x), &counter, length);
-  push(stack, genDouble(y, x), &counter, length);
-  push(stack, genDouble(y, x), &counter, length);
-  printf("%lf removed from the stack", pop(stack, &counter));
-  printStack(stack, length);
+  double arr[length];
+  Stack S1 = {arr, -1, length};
+  push(&S1, genDouble(y, x));
+  push(&S1, genDouble(y, x));
+  push(&S1, genDouble(y, x));
+  push(&S1, genDouble(y, x));
+  push(&S1, genDouble(y, x));
+  printf("%lf removed from the stack\n", pop(&S1));
+  printStack(&S1);
 }
