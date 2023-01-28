@@ -9,6 +9,36 @@ typedef struct {
 
 Arguments checkArgs(int, char **);
 double genDouble(double, double);
+void push(double[], double, int *, int);
+double pop(double[], int *);
+void printStack(double[], int);
+
+void printStack(double arr[], int length) {
+  for(int i = 0; i < length; i++) 
+    printf("stack[%d] = %lf\n", i, arr[i]);
+}
+
+double pop(double arr[], int *counter) {
+  if(*counter < 0) {
+    printf("Stack is empty.");
+    return -1;
+  }
+  int i = *counter;
+  double temp = arr[i];
+  arr[i] = 0;
+  *counter -= 1;
+  return temp;
+}
+
+void push(double arr[], double value, int *counter, int length) {
+  *counter += 1;
+  int i = *counter; 
+  if(i >= length - 1) {
+    printf("Stack is full. Cannot insert %lf", value);
+    return;
+  }
+  arr[i] = value;
+}
 
 double genDouble(double max, double min) {
   double range = (max - min); 
@@ -38,4 +68,14 @@ void main(int argc, char *argv[]) {
   Arguments arguments = checkArgs(argc, argv);
   int N = arguments.N, M = arguments.M;
   float x = arguments.x, y = arguments.y;
+  int length = N/2;
+  double stack[length];
+  int counter = -1;
+  push(stack, genDouble(y, x), &counter, length);
+  push(stack, genDouble(y, x), &counter, length);
+  push(stack, genDouble(y, x), &counter, length);
+  push(stack, genDouble(y, x), &counter, length);
+  push(stack, genDouble(y, x), &counter, length);
+  printf("%lf removed from the stack", pop(stack, &counter));
+  printStack(stack, length);
 }
