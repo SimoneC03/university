@@ -21,7 +21,7 @@ double pop(Stack *);
 void printStack(Stack *);
 
 void printStack(Stack *stack) {
-  for(int i = 0; i < stack->length; i++) 
+  for(int i = stack->length-1; i >= 0; i--) 
     printf("stack[%d] = %lf\n", i, stack->arr[i]);
 }
 
@@ -34,14 +34,15 @@ double pop(Stack *stack) {
   double temp = stack->arr[i];
   stack->arr[i] = 0;
   stack->counter -= 1;
+  fprintf(stderr, "%lf removed from the stack\n", temp);
   return temp;
 }
 
 void push(Stack *stack, double value) {
   stack->counter += 1;
   int i = stack->counter; 
-  if(i >= stack->length - 1) {
-    printf("Stack is full. Cannot insert %lf", value);
+  if(i > stack->length - 1) {
+    printf("Stack is full. Cannot insert %lf\n", value);
     return;
   }
   stack->arr[i] = value;
@@ -77,12 +78,29 @@ void main(int argc, char *argv[]) {
   float x = arguments.x, y = arguments.y;
   int length = N/2;
   double arr[length];
+  int i;
   Stack S1 = {arr, -1, length};
-  push(&S1, genDouble(y, x));
-  push(&S1, genDouble(y, x));
-  push(&S1, genDouble(y, x));
-  push(&S1, genDouble(y, x));
-  push(&S1, genDouble(y, x));
-  printf("%lf removed from the stack\n", pop(&S1));
+  Stack S2 = {arr, -1, length};
+  push(&S1, genDouble(y,x));
+  int popCounter = 0;
+  for(i = 0; i < N; i++) {
+    double w = genDouble(y, x);
+    push(&S1, w);
+    if(w >= (x+y)/2 && popCounter < M) {
+      popCounter++;
+      double temp = pop(&S1);
+      push(&S2, temp);
+      push(&S1, genDouble(y, x));
+      i++;
+    }
+  }
+  if(popCounter >= M)
+    while(i < N) {
+      push(&S1, genDouble(y, x));
+    }
+  printf("\nS1 Stack:\n");
   printStack(&S1);
+  printf("\nS2 Stack:\n");
+  printStack(&S2);
+  
 }
