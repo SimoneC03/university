@@ -57,7 +57,11 @@ int pop(Node **root) {
   if(*root == NULL) 
     return -1;
   for (Node *current = *root; current != NULL; current = current->next)
-    if(current->next->next == NULL) {
+    if(current->next == NULL) {
+      int temp = current->value;
+      *root = NULL;
+      return temp;
+    } else if(current->next->next == NULL) {
       int temp = current->next->value;
       current->next = NULL;
       return temp;
