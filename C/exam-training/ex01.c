@@ -34,7 +34,7 @@ void main(int argc, char *argv[])
   
   char *string = searchWString(S, M, N, K, w, &rowIndex, &colIndex);
   replaceChar(string, '*', w);
-  printf("The string with most \"%c\" occurrencies is at S[%d][%d]: \"%s\"\n\n", w, rowIndex, colIndex, string);
+  printf("\nThe string with most \"%c\" occurrencies is at S[%d][%d]: \"%s\"\n\n", w, rowIndex, colIndex, string);
 
   // free memory
   for (i = 0; i < M; i++)
@@ -104,24 +104,18 @@ void fillMatrix(char ***matrix, int M, int N, int K)
 void sortMatrix(char ***matrix, int M, int N)
 {
   int i, j;
-  for (i = 0; i < M; i++)
+  for (i = 0; i < N; i++)
   {
-    sortStrings(matrix[i], N);
+    for (j = 0; j < M - 1 - i; j++)
+      if (strcmp(matrix[j + 1][i], matrix[j][i]) < 0)
+      {
+        char *temp = matrix[j][i];
+        matrix[j][i] = matrix[j + 1][i];
+        matrix[j + 1][i] = temp;
+      }
   }
 }
 
-void sortStrings(char **arr, int length)
-{
-  int i, j;
-  for (i = 0; i < length; i++)
-    for (j = 0; j < length - 1 - i; j++)
-      if (strcmp(arr[j + 1], arr[j]) < 0)
-      {
-        char *temp = arr[j];
-        arr[j] = arr[j + 1];
-        arr[j + 1] = temp;
-      }
-}
 
 void printMatrix(char ***matrix, int M, int N)
 {
@@ -129,7 +123,7 @@ void printMatrix(char ***matrix, int M, int N)
   for (i = 0; i < M; i++)
   {
     for (j = 0; j < N; j++)
-      printf("%s\n", matrix[i][j]);
+      printf("%s - ", matrix[i][j]);
     printf("\n");
   }
 }
