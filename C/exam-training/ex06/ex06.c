@@ -18,6 +18,18 @@ void insertEnd(Node **, Row);
 void printList(Node **);
 void resetCharArray(char[], int);
 void filterList(Node **, int);
+void deallocateList(Node **);
+
+void deallocateList(Node **root) {
+  if(*root == NULL)
+    return;
+  Node *current = *root;
+  while(current->next != NULL) {
+    Node *temp = current;
+    current = current->next;
+    free(temp);
+  }
+}
 
 void filterList(Node **root, int n) {
   Node *current = *root;
@@ -133,4 +145,5 @@ void main(int argc, char **argv) {
   printList(&root);
   filterList(&root, n);
   printList(&root);
+  deallocateList(&root);
 }
