@@ -68,11 +68,18 @@ void printList(Node **root) {
 void removeElement(Node **root, int value) {
   if(*root == NULL) 
     return;
-  for (Node *current = *root; current != NULL; current = current->next)
+  if((*root)->value == value) {
+    Node *toRemove = *root;
+    *root = (*root)->next;
+    free(toRemove);
+    return;
+  }
+  for (Node *current = *root; current->next != NULL; current = current->next)
     if(current->next->value == value) {
       Node *toRemove = current->next;
       current->next = current->next->next;
       free(toRemove);
+      return;
     }
 }
 
