@@ -15,7 +15,6 @@ char *genString(int, char, char);
 char ***allocateMatrix(int, int, int);
 void fillMatrix(char ***, int, int, int);
 void sortMatrix(char ***, int, int);
-void sortStrings(char **, int);
 void printMatrix(char ***, int, int);
 char *searchWString(char ***, int, int, int, char, int *, int *);
 void replaceChar(char *, char, char);
