@@ -4,8 +4,8 @@ numbers		dcd		5,32,5,1324,-3,131,33927
 			mov		r7,#total_numbers
 			ldr		r0,[r7]
 			mov		r1,#numbers
-			ldr		r2,[r1]
-			mov		r3,r2
+			ldr		r2,[r1] ;		r2 = max
+			mov		r3,r2		;		r3 = min
 			add		r1,r1,#4
 loop
 			cmp		r0,#1
