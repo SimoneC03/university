@@ -4,7 +4,7 @@ numbers		dcd		1,2,3,4
 			mov		r1,#total_numbers
 			ldr		r0, [r1]
 			mov		r1,#numbers
-			mov		r5,#0 ; index of founded n
+			mov		r5,#0 ; index of found n
 loop
 			cmp		r0,#-1
 			beq		end_

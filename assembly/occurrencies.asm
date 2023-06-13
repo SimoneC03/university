@@ -10,9 +10,9 @@ loop
 			beq		end_
 			ldr		r5,[r1]
 			cmp		r3,r5
-			beq		founded
+			beq		found
 			b		end_loop
-founded
+found
 			add		r4,r4,#1
 			b		end_loop
 end_loop
