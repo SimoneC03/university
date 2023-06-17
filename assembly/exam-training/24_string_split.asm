@@ -28,6 +28,3 @@ c_scan_loop
 			b		scan_loop
 end_
 			end
-			
-			
-			
