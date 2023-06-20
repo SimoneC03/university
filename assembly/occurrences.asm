@@ -4,7 +4,7 @@ numbers		dcd		4,3,1,4,1,1,1
 			ldr		r0, [r1]
 			mov		r1, #numbers
 			mov		r3,#1 ; r3 -> n to find
-			mov		r4,#0 ; r4 -> total occurrencies
+			mov		r4,#0 ; r4 -> total occurrences
 loop
 			cmp		r0,#0
 			beq		end_

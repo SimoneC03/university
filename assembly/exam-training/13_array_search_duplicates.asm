@@ -5,7 +5,7 @@ found_indexes	dcd		0,0,0,0,0,0,0,0,0
 				mov		r1, #array
 				mov		r2, #found_indexes
 				mov		r3, #3 ; n to find
-				mov		r5, #0 ; total occurrencies of n
+				mov		r5, #0 ; total occurrences of n
 loop
 				cmp		r0,#0
 				beq		end_
