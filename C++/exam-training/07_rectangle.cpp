@@ -8,7 +8,6 @@ class Rectangle {
         double height;
 
     public:
-
         double getBase() {
             return base;
         }

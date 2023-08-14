@@ -4,7 +4,6 @@
 class Dot2D {
     
     public:
-
         double x;
         double y;
         
@@ -29,7 +28,6 @@ class Rectangle {
         Dot2D bottom_right;
 
     public:
-
         double getBase() {
             return base;
         }
@@ -101,6 +99,7 @@ using namespace std;
 int main() {
     Dot2D dot = {10,20};
     Rectangle B({10,20},{50,10});
+    cout << "Rectangle height is " << B.getHeight() <<", width is " << B.getBase() << endl;
     cout << "Is the dot (" << dot.x << ", " << dot.y << ") contained in the rectangle B? " << (B.contains(dot) ? "Yes" : "No") << endl;
     return 0;
 }
