@@ -58,31 +58,50 @@ class RPS {
         static const int required_players = 2;
         static const int max_players = 2;
         static const int game_score = 5;
+        static const short int game_rounds = 5;
         
         static Player *play(Player p1, Player p2) {
-            cout << p1.getName() << "'s turn: choose between rock, paper and scissors. \n";
-            string p1_answer;
-            cin >> p1_answer;
-            cout << p2.getName() << "'s turn: choose between rock, paper and scissors. \n";
-            string p2_answer;
-            cin >> p2_answer;
-            Player *p;
-            if (
-                (p1_answer.compare("paper") == 0 && p2_answer.compare("scissors") == 0) ||
-                (p1_answer.compare("scissors") == 0 && p2_answer.compare("rock") == 0) ||
-                (p1_answer.compare("rock") == 0 && p2_answer.compare("paper") == 0)
-            ) {
-                p = new Player(p2.getName(), game_score, 1);
-            } else if (
-                (p2_answer.compare("paper") == 0 && p1_answer.compare("scissors") == 0) ||
-                (p2_answer.compare("scissors") == 0 && p1_answer.compare("rock") == 0) ||
-                (p2_answer.compare("rock") == 0 && p1_answer.compare("paper") == 0)
-            ) {
-                p = new Player(p1.getName(), game_score, 1);
+            short int i = 0;
+            short int p1_won_rounds = 0;
+            short int p2_won_rounds = 0;
+            Player *winner;
+            while(i < game_rounds) {
+                i++;
+                cout << "\n" << p1.getName() << "'s won rounds: " << p1_won_rounds << "\n";
+                cout << p2.getName() << "'s won rounds: " << p2_won_rounds << "\n";
+                cout << "-- Round " << i << " --\n";
+                cout << p1.getName() << "'s turn: choose between rock, paper and scissors\n";
+                string p1_answer;
+                cin >> p1_answer;
+                cout << p2.getName() << "'s turn: choose between rock, paper and scissors\n";
+                string p2_answer;
+                cin >> p2_answer;
+                if (
+                    (p1_answer.compare("paper") == 0 && p2_answer.compare("scissors") == 0) ||
+                    (p1_answer.compare("scissors") == 0 && p2_answer.compare("rock") == 0) ||
+                    (p1_answer.compare("rock") == 0 && p2_answer.compare("paper") == 0)
+                ) {
+                    p2_won_rounds++;
+                } else if (
+                    (p2_answer.compare("paper") == 0 && p1_answer.compare("scissors") == 0) ||
+                    (p2_answer.compare("scissors") == 0 && p1_answer.compare("rock") == 0) ||
+                    (p2_answer.compare("rock") == 0 && p1_answer.compare("paper") == 0)
+                ) {
+                    p1_won_rounds++;
+                }
+            }
+            if(p1_won_rounds > p2_won_rounds) {
+                /* Player 1 win */
+                winner = new Player(p1.getName(), p1.getScore()+game_score, p1.getGames()+1);
+                return winner;
+            } else if(p2_won_rounds > p1_won_rounds) {
+                /* Player 2 win */
+                winner = new Player(p2.getName(), p2.getScore()+game_score, p2.getGames()+1);
+                return winner;
             } else {
+                /* Draw */
                 return nullptr;
             }
-            return p;
         }
 };
 
@@ -104,14 +123,14 @@ class GameRoom {
         }
 
         void printWinner(Player *winner) {
-            cout << "-------------------------------------------------\n";
+            cout << "\n-------------------------------------------------\n";
             cout << "The winner is " << winner->getName() << "! \n";
             cout << "-------------------------------------------------\n";
         }
 
         void printLeaderboard() {
             if(players.size() == 0) {
-                cout << "There are no registered players at the moment\n";
+                cout << "\nThere are no registered players at the moment\n";
             } else {
                 cout << "\nCurrent leaderboard:\n";
                 for(Player p: players) {
@@ -126,7 +145,7 @@ class GameRoom {
         bool updatePlayer(const string &name, const int new_score, const int new_games) {
             bool updated = false;
             for(int i = 0; i < players.size(); i++) {
-                if(players[i].getName().compare(name)) {
+                if(players[i].getName().compare(name) == 0) {
                     Player p(name, new_score, new_games);
                     players[i] = p;
                     updated = true;
@@ -159,8 +178,9 @@ class GameRoom {
                 RPS rps;
                 Player *winner = rps.play(p1, p2);
                 if(winner != nullptr) {
-                    updatePlayer(winner->getName(), winner->getScore()+rps.game_score, winner->getGames()+1);
+                    updatePlayer(winner->getName(), winner->getScore(), winner->getGames());
                 } else {
+                    /* Draw has occurred, updating only players's total games */
                     updatePlayer(p1.getName(), p1.getScore(), p1.getGames()+1);
                     updatePlayer(p2.getName(), p2.getScore(), p2.getGames()+1);
                 }
@@ -174,7 +194,7 @@ class GameRoom {
 
         /* Ask the user to choose a game to play with */
         void askForChoice() {
-            cout << "Select a game to play with.\n";
+            cout << "\nSelect a game to play with.\n";
             cout << "1 - Rock-Paper-Scissors (2 players required)\n";
             cout << "2 - Dice roll (Min. 2 players required)\n";
             cout << "\n\n8 - Watch leaderboard\n";
