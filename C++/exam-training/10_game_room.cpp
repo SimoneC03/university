@@ -337,6 +337,7 @@ class GameRoom {
             cout << "1 - Rock-Paper-Scissors (2 players required)\n";
             cout << "2 - Dice roll (Min. 2 players required)\n";
             cout << "\n\n8 - Watch leaderboard\n";
+            cout << "0 - Exit from program\n";
             string choice;
             cin >> choice;
             if(isNumeric(choice)) {
@@ -347,6 +348,7 @@ class GameRoom {
                         Player *winner = play(Game::RPS);
                         if(winner != nullptr) printWinner(winner);
                         else cout << "Draw\n";
+                        delete winner;
                         break;
                     }
                     /* Dice roll */
@@ -354,6 +356,7 @@ class GameRoom {
                         Player *winner = play(Game::DiceRoll);
                         if(winner != nullptr) printWinner(winner);
                         else cout << "Draw\n";
+                        delete winner;
                         break;
                     }
                     /* Show leaderboard */
@@ -361,6 +364,11 @@ class GameRoom {
                         printLeaderboard();
                         askForChoice();
                         break;
+                    }
+                    /* Exit from program */
+                    case 0: {
+                        delete this;
+                        exit(0);
                     }
                     default: {
                         cout << "Invalid option.\n";
