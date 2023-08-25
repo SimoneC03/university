@@ -1,5 +1,6 @@
 #include <iostream>
 
+using std::cout;
 class Rectangle {
     private:
         double base;
@@ -46,18 +47,18 @@ void sortArray(T array[], int n) {
 template <typename T>
 void printArray(const T arr[], int n) {
     for(int i = 0; i < n; i++) {
-        std::cout << "arr[" << i <<"] = " << arr[i] << "\n";
+        cout << "arr[" << i <<"] = " << arr[i] << "\n";
     }
-    std::cout << "\n";
+    cout << "\n";
 }
 
 /* Print a given array with n elements of type Rectangle */
 template <>
 void printArray(const Rectangle arr[], int n) {
     for(int i = 0; i < n; i++) {
-        std::cout << "arr[" << i <<"] = " << arr[i].getArea() << "  (rectangle's area)\n";
+        cout << "arr[" << i <<"] = " << arr[i].getArea() << "  (rectangle's area)\n";
     }
-    std::cout << "\n";
+    cout << "\n";
 }
 
 int main() {
@@ -68,14 +69,14 @@ int main() {
         Rectangle(3.0, 4.0),
         Rectangle(4.0, 6.0),
     };
-    std::cout << "Printing arrays before sorting\n";
+    cout << "Printing arrays before sorting\n";
     printArray(arrInt, 3);
     printArray(arrChar, 3);
     printArray(arrRect, 3);
     sortArray(arrInt, 3);
     sortArray(arrChar, 3);
     sortArray(arrRect, 3);
-    std::cout << "Printing arrays after sorting\n";
+    cout << "Printing arrays after sorting\n";
     printArray(arrInt, 3);
     printArray(arrChar, 3);
     printArray(arrRect, 3);
