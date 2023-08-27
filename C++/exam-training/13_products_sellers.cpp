@@ -1,8 +1,9 @@
 #include <iostream>
 #include <ctime>
 #include <vector>
+#include <fstream>
 
-using std::cout, std::string, std::cin;
+using std::cout, std::string, std::cin, std::ifstream, std::ofstream;
 
 bool isNumeric(const string);
 /* Return whether a value is numeric or not */
@@ -228,8 +229,57 @@ class Seller {
         }
 };
 
+void readData(std::vector<Seller> *sellers);
+/* Load all the saved sellers and products data from the disk */
+void readData(std::vector<Seller> *sellers) {
+    string delimiter = ";"; // separator char
+    string line;
+    ifstream sellersF("13_ex_sellers.txt");
+    if (sellersF.is_open()) {
+        while ( getline (sellersF,line) ) {
+            if(line.length() > 0) {
+                string code = line.substr(0, line.find(delimiter));
+                string name = line.substr(line.find(delimiter)+1, line.length());
+                Seller *s = new Seller(stoi(code), name);
+                sellers->push_back(*s);
+            }
+        }
+        sellersF.close();
+    } else {
+        // create sellers file
+        ofstream sellersF;
+        sellersF.open("13_ex_sellers.txt");
+        sellersF.close();
+    }
+    ifstream productsF("13_ex_products.txt");
+    if (productsF.is_open()) {
+        while ( getline (productsF,line) ) {
+            string code = line.substr(0, line.find(delimiter));
+            line = line.substr(line.find(delimiter)+1, line.length());
+            string name = line.substr(0, line.find(delimiter));
+            line = line.substr(line.find(delimiter)+1, line.length());
+            string price = line.substr(0, line.find(delimiter));
+            string seller_code = line.substr(line.find(delimiter)+1, line.length());
+            cout << "selelr nme" << (*sellers)[0].getName();
+            for(int i = 0; i < sellers->size(); i++) {
+                if((*sellers)[i].getCode() == stoi(seller_code)) {
+                    Product *p = new Product(stoi(code), stod(price), name);
+                    (*sellers)[i].addProduct(p);
+                }
+            }
+        }
+        productsF.close();
+    } else {
+        // create products file
+        ofstream productsF;
+        productsF.open("13_ex_products.txt");
+        productsF.close();
+    }
+}
+
 int main() {
     std::vector<Seller> sellers;
+    readData(&sellers);
     string input;
     askforoption:
     cout << "\n1 - Add a seller\n";
