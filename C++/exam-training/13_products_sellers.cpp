@@ -75,7 +75,7 @@ class Product {
             cout << "Insert the product's price:";
             cin >> input;
             if(isNumeric(input)) {
-                price = stoi(input);
+                price = stod(input);
             } else {
                 cout << "The product's price must contain only numerical digits\n";
                 goto askforproductprice;
@@ -149,11 +149,19 @@ class Seller {
     
     public:
 
-        Seller() : code(0), sold_products_total(0) {}
+        Seller() : code(0), sold_products_total(0), name("No name") {}
 
-        Seller(const int code) : code(code), sold_products_total(0) {}
+        Seller(const int code, const string &name) : code(code), sold_products_total(0), name(name) {}
 
-        Seller(const Seller &s) : code(s.code), sold_products(s.sold_products), sold_products_total(s.sold_products_total) {}
+        Seller(const Seller &s) : code(s.code), sold_products(s.sold_products), sold_products_total(s.sold_products_total), name(s.name) {}
+
+        string getName() {
+            return name;
+        }
+
+        int getCode() {
+            return code;
+        }
 
         /* Add all prices of sold products and return the sum */
         double getTotalPrice() {
@@ -201,9 +209,14 @@ class Seller {
         friend std::ostream &operator<<(std::ostream &os, const Seller &seller) {
             os << "\nSeller " << seller.code << " info:\n";
             os << "Code: " << seller.code << "\n";
-            os << "Sold products:\n";
-            for(const Product *p : seller.sold_products) {
-                os << *p;
+            os << "Name: " << seller.name << "\n";
+            if(seller.sold_products.size() > 0) {
+                os << "Sold products:\n";
+                for(const Product *p : seller.sold_products) {
+                    os << *p;
+                }
+            } else {
+                os << "Sold products: none\n";
             }
             return os;
         }
@@ -216,23 +229,108 @@ class Seller {
 };
 
 int main() {
-    Seller s1, s2;
-    s1.read();
-    Product p1;
-    FoodProduct p2;
-    p1.read();
-    p2.read();
-    s1.addProduct(&p1);
-    s1.addProduct(&p2);
-    cout << "Seller 1 info" << s1;
-    s2.read();
-    FoodProduct p3;
-    BabyProduct p4;
-    p3.read();
-    p4.read();
-    s2.addProduct(&p3);
-    s2.addProduct(&p4);
-    cout << "Seller 2 info" << s2;
-
+    std::vector<Seller> sellers;
+    string input;
+    askforoption:
+    cout << "\n1 - Add a seller\n";
+    cout << "2 - Add a product\n";
+    cout << "3 - Print sellers info\n";
+    cout << "4 - Print the total of sold products ascending\n";
+    cout << "5 - Print the total of sold products descending\n";
+    cout << "\n0 - Exit from program\n";
+    cin >> input;
+    if(isNumeric(input)) {
+        switch (stoi(input)) {
+            case 0:
+                /* Exit */
+                exit(0);
+                break;
+            case 1: {
+                /* Add a seller */
+                string name;
+                cout << "Insert the seller's name: ";
+                cin >> name;
+                Seller s(sellers.size()+1, name);
+                sellers.push_back(s);
+                cout << "New seller added!\n";
+                break;
+            }
+            case 2: {
+                /* Add a product */
+                if(sellers.size() == 0) {
+                    cout << "Add at least a seller before.\n";
+                    break;
+                }
+                cout << "Who do you want to add a product to? (enter a number)\n";
+                for(int i = 0; i < sellers.size(); i++) {
+                    cout << i << " - " << sellers[i].getName() << "[" << sellers[i].getCode() << "]\n";
+                }
+                string seller;
+                cin >> seller;
+                if(isNumeric(seller)) {
+                    Product *p = new Product();
+                    p->read();
+                    sellers[stoi(seller)].addProduct(p);
+                } else {
+                    cout << "Invalid number.\n";
+                }
+                break;
+            }
+            case 3: {
+                /* Print sellers info */
+                for(const Seller &s : sellers) {
+                    cout << s << "\n\n";
+                }
+                break;
+            }
+            case 4: {
+                /* Print sellers total ascending */
+                std::vector<int> indexes;
+                for(int i = 0; i < sellers.size(); i++)
+                    indexes.push_back(i);
+                for(int i = 0; i < sellers.size(); i++) {
+                    for(int j = 0; j < sellers.size() - 1 - i; j++) {
+                        if(sellers[indexes[j]].getTotalPrice() > sellers[indexes[j+1]].getTotalPrice()) {
+                            int temp = indexes[j];
+                            indexes[j] = indexes[j+1];
+                            indexes[j+1] = temp;
+                        }
+                    }
+                }
+                cout << "Total of sold products ascending:\n";
+                for(int i = 0; i < indexes.size(); i++) {
+                    cout << i+1 << " - " << sellers[indexes[i]].getName() << " (" << sellers[indexes[i]].getTotalPrice() << "€)\n";
+                }
+                break;
+            }
+            case 5: {
+                /* Print sellers total descending */
+                std::vector<int> indexes;
+                for(int i = 0; i < sellers.size(); i++)
+                    indexes.push_back(i);
+                for(int i = 0; i < sellers.size(); i++) {
+                    for(int j = 0; j < sellers.size() - 1 - i; j++) {
+                        if(sellers[indexes[j]].getTotalPrice() < sellers[indexes[j+1]].getTotalPrice()) {
+                            int temp = indexes[j];
+                            indexes[j] = indexes[j+1];
+                            indexes[j+1] = temp;
+                        }
+                    }
+                }
+                cout << "Total of sold products descending:\n";
+                for(int i = 0; i < indexes.size(); i++) {
+                    cout << i+1 << " - " << sellers[indexes[i]].getName() << " (" << sellers[indexes[i]].getTotalPrice() << "€)\n";
+                }
+                break;
+            }
+            default:
+                break;
+        }
+        goto askforoption;
+    } else {
+        cout << "Invalid option\n";
+        goto askforoption;
+    }
+    
     return 0;
 }
