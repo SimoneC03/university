@@ -80,7 +80,7 @@ class Product {
             }
             cout << "Insert the product's name:";
             cin.ignore();
-            std::getline(cin, name);
+            getline(cin, name);
             askforproductprice:
             cout << "Insert the product's price:";
             cin >> input;
@@ -279,7 +279,8 @@ void readData(std::vector<Seller> *sellers) {
     string line;
     ifstream sellersF("13_ex_sellers.txt");
     if (sellersF.is_open()) {
-        while ( getline (sellersF,line) ) {
+        sellersF.seekg(0, std::ios::beg);
+        while ( getline(sellersF,line) ) {
             if(line.length() > 0) {
                 string code = line.substr(0, line.find(delimiter));
                 string name = line.substr(line.find(delimiter)+1, line.length());
@@ -296,7 +297,8 @@ void readData(std::vector<Seller> *sellers) {
     }
     ifstream productsF("13_ex_products.txt");
     if (productsF.is_open()) {
-        while ( getline (productsF,line) ) {
+        productsF.seekg(0, std::ios::beg);
+        while ( getline(productsF,line) ) {
             if(line.length() > 0) {
                 string code = line.substr(0, line.find(delimiter));
                 line = line.substr(line.find(delimiter)+1, line.length());
@@ -307,7 +309,9 @@ void readData(std::vector<Seller> *sellers) {
                 string timestamp = line.substr(0, line.find(delimiter));
                 line = line.substr(line.find(delimiter)+1, line.length());
                 string seller_code;
-                Product *p;
+                Product *p = nullptr;
+                FoodProduct *fp = nullptr;
+                BabyProduct *bp = nullptr;
                 if(line.find(delimiter) > 0) {
                     // derived-class products
                     seller_code = line.substr(0, line.find(delimiter));
@@ -316,11 +320,11 @@ void readData(std::vector<Seller> *sellers) {
                     if(type.compare("fp") == 0) {
                         // food product
                         string expiry = line.substr(line.find(delimiter)+1, line.length());
-                        p = new FoodProduct(stoi(code), stod(price), name, stoi(expiry));
+                        fp = new FoodProduct(stoi(code), stod(price), name, stoi(expiry));
                     } else if(type.compare("bp") == 0) {
                         // baby product
                         string age_range = line.substr(line.find(delimiter)+1, line.length());
-                        p = new BabyProduct(stoi(code), stod(price), name, age_range);
+                        bp = new BabyProduct(stoi(code), stod(price), name, age_range);
                     }
                 } else {
                     // base-class product
@@ -329,7 +333,12 @@ void readData(std::vector<Seller> *sellers) {
                 }
                 for(int i = 0; i < sellers->size(); i++) {
                     if((*sellers)[i].getCode() == stoi(seller_code)) {
-                        (*sellers)[i].addProduct(p);
+                        if(p != nullptr)
+                            (*sellers)[i].addProduct(p);
+                        else if(fp != nullptr)
+                            (*sellers)[i].addProduct(fp);
+                        else if(bp != nullptr)
+                            (*sellers)[i].addProduct(bp);
                     }
                 }
             }
@@ -366,7 +375,7 @@ int main() {
                 string name;
                 cout << "Insert the seller's name: ";
                 cin.ignore();
-                std::getline(cin, name);
+                getline(cin, name);
                 Seller s(sellers.size()+1, name);
                 sellers.push_back(s);
                 ofstream outfile;
@@ -396,20 +405,24 @@ int main() {
                     cin >> type;
                     if(isNumeric(type)) {
                         int ptype = stoi(type);
-                        Product *p;
                         if(ptype == 1) {
+                            Product *p;
                             p = new Product();
                             p->read();
+                            sellers[stoi(seller)].addProduct(p);
                         } else if(ptype == 2) {
+                            FoodProduct *p;
                             p = new FoodProduct();
                             p->read();
+                            sellers[stoi(seller)].addProduct(p);
                         } else if(ptype == 3) {
+                            BabyProduct *p;
                             p = new BabyProduct();
                             p->read();
+                            sellers[stoi(seller)].addProduct(p);
                         } else {
                             cout << "Invalid number.\n";
                         }
-                        sellers[stoi(seller)].addProduct(p);
                     } else {
                         cout << "Invalid number.\n";
                     }
