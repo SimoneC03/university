@@ -3,7 +3,7 @@
 #include <vector>
 #include <fstream>
 
-using std::cout, std::string, std::cin, std::ifstream, std::ofstream;
+using std::cout, std::string, std::cin, std::ifstream, std::ofstream, std::time_t;
 
 bool isNumeric(const string);
 /* Return whether a value is numeric or not */
@@ -22,7 +22,7 @@ class Product {
         int code;
         double price;
         string name;
-        std::time_t created_at;
+        time_t created_at;
 
     public:
 
@@ -38,6 +38,14 @@ class Product {
             return price;
         }
 
+        string getName() {
+            return name;
+        }
+
+        time_t getCreatedAt() {
+            return created_at;
+        }
+
         void setCode(const int code) {
             this->code = code;
         }
@@ -47,7 +55,7 @@ class Product {
         }
 
         friend std::ostream &operator<<(std::ostream &os, const Product &product) {
-            os << "\nProduct " << product.code << " info:\n";
+            os << "\nProduct " << product.code << "\n";
             os << "Code: " << product.code << "\n";
             os << "Name: " << product.name << "\n";
             os << "Price: " << product.price << "€\n";
@@ -71,7 +79,8 @@ class Product {
                 goto askforproductcode;
             }
             cout << "Insert the product's name:";
-            cin >> name;
+            cin.ignore();
+            std::getline(cin, name);
             askforproductprice:
             cout << "Insert the product's price:";
             cin >> input;
@@ -93,6 +102,14 @@ class FoodProduct : public Product {
     
     public:
 
+        FoodProduct(): Product(), expiry(0) {}
+
+        FoodProduct(const int code, const double price, const string &name, const time_t expiry): Product(code, price, name), expiry(expiry) {}
+
+        time_t getExpiry() {
+            return expiry;
+        }
+
         void read() {
             Product::read();
             askforexpiry:
@@ -108,6 +125,11 @@ class FoodProduct : public Product {
         /* Return true if product is not expired */
         bool verify() const {
             return std::time(nullptr) < expiry;
+        }
+
+        friend std::ostream &operator<<(std::ostream &os, const FoodProduct &p) {
+            os << static_cast<const Product &>(p) << "Expiry: " << p.expiry << "\n";
+            return os;
         }
 };
 
@@ -190,6 +212,17 @@ class Seller {
 
         void addProduct(Product *p) {
             sold_products.push_back(p);
+            ofstream outfile;
+            outfile.open("13_ex_products.txt", std::ios_base::app); // append new product row
+            string row = std::to_string(p->getCode()) + ";" + p->getName() + ";" + std::to_string(p->getPrice()) + ";" + std::to_string(p->getCreatedAt()) + ";" + std::to_string(this->code);
+            FoodProduct *foodp = dynamic_cast<FoodProduct *>(p);
+            BabyProduct *babyp = dynamic_cast<BabyProduct *>(p);
+            if(foodp != nullptr) {
+                row + ";fp;" + std::to_string(foodp->getExpiry());
+            } else if(babyp != nullptr) {
+                row + ";bp;" + babyp->getAgeRange();
+            }
+            outfile << row << std::endl;
         }
 
         void read() {
@@ -208,13 +241,23 @@ class Seller {
         }
 
         friend std::ostream &operator<<(std::ostream &os, const Seller &seller) {
-            os << "\nSeller " << seller.code << " info:\n";
+            os << "\nSeller " << seller.code << "\n";
             os << "Code: " << seller.code << "\n";
             os << "Name: " << seller.name << "\n";
             if(seller.sold_products.size() > 0) {
                 os << "Sold products:\n";
                 for(const Product *p : seller.sold_products) {
-                    os << *p;
+                    const FoodProduct *foodp = dynamic_cast<const FoodProduct *>(p);
+                    if(foodp != nullptr) {
+                        os << *foodp;
+                    } else {
+                        const BabyProduct *babyp = dynamic_cast<const BabyProduct *>(p);
+                        if(babyp != nullptr) {
+                            os << *babyp;
+                        } else {
+                            os << *p;
+                        }
+                    }
                 }
             } else {
                 os << "Sold products: none\n";
@@ -254,17 +297,40 @@ void readData(std::vector<Seller> *sellers) {
     ifstream productsF("13_ex_products.txt");
     if (productsF.is_open()) {
         while ( getline (productsF,line) ) {
-            string code = line.substr(0, line.find(delimiter));
-            line = line.substr(line.find(delimiter)+1, line.length());
-            string name = line.substr(0, line.find(delimiter));
-            line = line.substr(line.find(delimiter)+1, line.length());
-            string price = line.substr(0, line.find(delimiter));
-            string seller_code = line.substr(line.find(delimiter)+1, line.length());
-            cout << "selelr nme" << (*sellers)[0].getName();
-            for(int i = 0; i < sellers->size(); i++) {
-                if((*sellers)[i].getCode() == stoi(seller_code)) {
-                    Product *p = new Product(stoi(code), stod(price), name);
-                    (*sellers)[i].addProduct(p);
+            if(line.length() > 0) {
+                string code = line.substr(0, line.find(delimiter));
+                line = line.substr(line.find(delimiter)+1, line.length());
+                string name = line.substr(0, line.find(delimiter));
+                line = line.substr(line.find(delimiter)+1, line.length());
+                string price = line.substr(0, line.find(delimiter));
+                line = line.substr(line.find(delimiter)+1, line.length());
+                string timestamp = line.substr(0, line.find(delimiter));
+                line = line.substr(line.find(delimiter)+1, line.length());
+                string seller_code;
+                Product *p;
+                if(line.find(delimiter) > 0) {
+                    // derived-class products
+                    seller_code = line.substr(0, line.find(delimiter));
+                    line = line.substr(line.find(delimiter)+1, line.length());
+                    string type = line.substr(0, line.find(delimiter));
+                    if(type.compare("fp") == 0) {
+                        // food product
+                        string expiry = line.substr(line.find(delimiter)+1, line.length());
+                        p = new FoodProduct(stoi(code), stod(price), name, stoi(expiry));
+                    } else if(type.compare("bp") == 0) {
+                        // baby product
+                        string age_range = line.substr(line.find(delimiter)+1, line.length());
+                        p = new BabyProduct(stoi(code), stod(price), name, age_range);
+                    }
+                } else {
+                    // base-class product
+                    seller_code = line;
+                    p = new Product(stoi(code), stod(price), name);
+                }
+                for(int i = 0; i < sellers->size(); i++) {
+                    if((*sellers)[i].getCode() == stoi(seller_code)) {
+                        (*sellers)[i].addProduct(p);
+                    }
                 }
             }
         }
@@ -299,9 +365,13 @@ int main() {
                 /* Add a seller */
                 string name;
                 cout << "Insert the seller's name: ";
-                cin >> name;
+                cin.ignore();
+                std::getline(cin, name);
                 Seller s(sellers.size()+1, name);
                 sellers.push_back(s);
+                ofstream outfile;
+                outfile.open("13_ex_sellers.txt", std::ios_base::app); // append new seller row
+                outfile << s.getCode() << ";" << s.getName() << std::endl;
                 cout << "New seller added!\n";
                 break;
             }
@@ -317,10 +387,32 @@ int main() {
                 }
                 string seller;
                 cin >> seller;
-                if(isNumeric(seller)) {
-                    Product *p = new Product();
-                    p->read();
-                    sellers[stoi(seller)].addProduct(p);
+                if(isNumeric(seller) && stoi(seller) < sellers.size() ) {
+                    cout << "What type of product do you want to add?\n"
+                    << "1 - Generic product\n"
+                    << "2 - Food product\n"
+                    << "3 - Baby product\n";
+                    string type;
+                    cin >> type;
+                    if(isNumeric(type)) {
+                        int ptype = stoi(type);
+                        Product *p;
+                        if(ptype == 1) {
+                            p = new Product();
+                            p->read();
+                        } else if(ptype == 2) {
+                            p = new FoodProduct();
+                            p->read();
+                        } else if(ptype == 3) {
+                            p = new BabyProduct();
+                            p->read();
+                        } else {
+                            cout << "Invalid number.\n";
+                        }
+                        sellers[stoi(seller)].addProduct(p);
+                    } else {
+                        cout << "Invalid number.\n";
+                    }
                 } else {
                     cout << "Invalid number.\n";
                 }
