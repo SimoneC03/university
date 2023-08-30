@@ -10,11 +10,11 @@ struct Node {
 };
 
 template <typename T>
-class DoubleLinkedList {
+class DoublyLinkedList {
     public:
         Node<T> *head;
 
-        DoubleLinkedList() : head(nullptr) {}
+        DoublyLinkedList() : head(nullptr) {}
 
         void insertHead(T value) {
             Node<T> *newNode = new Node<T>;
@@ -81,10 +81,10 @@ class DoubleLinkedList {
             return NULL;
         }
 
-        friend ostream &operator<<(ostream &os, DoubleLinkedList<T> &l) {
+        friend ostream &operator<<(ostream &os, DoublyLinkedList<T> &l) {
             int i = 0;
             for(Node<T> *current = l.head; current != nullptr; current = current->next) {
-                os << "DoubleLinkedList[" << i << "] = " << current->value << "\n";
+                os << "DoublyLinkedList[" << i << "] = " << current->value << "\n";
                 i++;
             }
             return os;
@@ -104,7 +104,7 @@ class DoubleLinkedList {
 };
 
 int main() {
-    DoubleLinkedList<int> l;
+    DoublyLinkedList<int> l;
     l.insertHead(1);
     l.insertHead(2);
     l.insertHead(3);
