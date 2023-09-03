@@ -85,14 +85,14 @@ class BinaryTree {
         }
 
         Node<T> *min(Node<T> *n) {
-            if(root == nullptr) return nullptr;
+            if(n == nullptr) return nullptr;
             Node<T> *current = n;
             while(current->left != nullptr) current = current->left;
             return current;
         }
 
         Node<T> *max(Node<T> *n) {
-            if(root == nullptr) return nullptr;
+            if(n == nullptr) return nullptr;
             Node<T> *current = n;
             while(current->right != nullptr) current = current->right;
             return current;
@@ -137,6 +137,7 @@ class BinaryTree {
         }
 
         void deleteNode(Node<T> *n) {
+            if(n == nullptr) return;
             if(n->left == nullptr) transplant(n, n->right);
             else if(n->right == nullptr) transplant(n, n->left);
             else {
