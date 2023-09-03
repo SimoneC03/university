@@ -130,6 +130,7 @@ class BinaryTree {
 
         /* Replace a subtree of root u with a new one of root n */
         void transplant(Node<T> *u, Node<T> *n) {
+            if(u == nullptr) return;
             if(u->father == nullptr) root = n;
             else if(u == u->father->left) u->father->left = n;
             else u->father->right = n;
