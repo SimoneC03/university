@@ -29,10 +29,6 @@ class SortedLinkedList {
                 return;
             }
             Node<T> *current = head;
-            if(current->next == nullptr) {
-                current->next = newNode;
-                return;
-            }
             while(current->next != nullptr) {
                 if(value <= current->next->value) {
                     newNode->next = current->next;
