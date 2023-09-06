@@ -10,6 +10,7 @@ struct Node {
     Node<T> *father;
 };
 
+/* Binary Search Tree */
 template <typename T>
 class BST {
     private:

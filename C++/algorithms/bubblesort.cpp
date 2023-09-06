@@ -2,14 +2,15 @@
 
 using std::cout;
 
+/* Print an array `arr` with a given `size` */
 template <typename T>
 void printArr(T &arr, const int size) {
     for(int i = 0; i < size; i++)
         cout << "arr[" << i << "] = " << arr[i] << "\n";
 }
 
-template <typename T>
 /* Sort generic type array in ascending order using the Bubblesort algorithm */
+template <typename T>
 void bubbleSort(T *arr, const int size) {
     T temp;
     for(int i = 0; i < size; i++) 

@@ -2,12 +2,14 @@
 
 using std::cout;
 
+/* Print an array `arr` with a given `size` */
 template <typename T>
 void printArr(T &arr, const int size) {
     for(int i = 0; i < size; i++)
         cout << "arr[" << i << "] = " << arr[i] << "\n";
 }
 
+/* Merge the splitted array `arr` by picking neatly elements from the leftArray and the rightArray */
 template <typename T>
 void merge(T *leftArr, T *rightArr, T *arr, const int size) {
     const int leftSize = size / 2;
@@ -36,15 +38,17 @@ void merge(T *leftArr, T *rightArr, T *arr, const int size) {
     }
 }
 
+/* Sort generic type array in ascending order using the Mergesort algorithm.
+*  Split recursively the array `arr` in more subarrays and then neatly merge
+*  all the elements. */
 template <typename T>
-/* Sort generic type array in ascending order using the Mergesort algorithm */
 void mergeSort(T *arr, const int size) {
     if(size <= 1) return;
     const int middle = size / 2;
     int i = 0; // left array index
     int j = 0; // right array index
-    int *leftArr = new int[middle];
-    int *rightArr = new int[size - middle];
+    T *leftArr = new T[middle];
+    T *rightArr = new T[size - middle];
     for(; i < size; i++) {
         if(i < middle) {
             leftArr[i] = arr[i];
