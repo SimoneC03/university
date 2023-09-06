@@ -1,6 +1,6 @@
 #include <iostream>
 
-using std::cout, std::cin;
+using std::cout;
 
 /* Struct representing a Node of a Linked list with a pointer to the next element */
 template <typename T>
