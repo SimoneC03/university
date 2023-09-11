@@ -106,7 +106,7 @@ class BST {
         void remove(T value) {
             if(root == nullptr) return;
             Node<T> *toRemove = search(value);
-            deleteNode(toRemove);
+            if(toRemove != nullptr) deleteNode(toRemove);
         }
 
         static void preorderPrint(Node<T> *n) {
