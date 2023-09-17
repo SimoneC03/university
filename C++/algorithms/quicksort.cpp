@@ -19,8 +19,8 @@ void swap(T *a, T *b) {
 
 /*  Create a partition and return the pivot array element's index */
 template <typename T>
-int partition(T *arr, const int start, const int end) {
-    int pivot = arr[end];
+T partition(T *arr, const int start, const int end) {
+    T pivot = arr[end];
     int i = start - 1;
     for(int j = start; j < end; j++) {
         if(arr[j] < pivot) {
@@ -37,7 +37,7 @@ int partition(T *arr, const int start, const int end) {
 template <typename T>
 void quicksort(T *arr, const int start, const int end) {
     if(start < end) {
-        int pivot = partition(arr, start, end);
+        T pivot = partition(arr, start, end);
         quicksort(arr, start, pivot - 1);
         quicksort(arr, pivot + 1, end);
     }
