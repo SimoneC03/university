@@ -130,10 +130,12 @@ class Polynomial {
         friend std::ostream &operator<<(std::ostream &os, Polynomial &p) {
             if(p.monomials == nullptr) return os;
             for(int i = 0; i < p.terms; i++) {
-                if(p.monomials[i].variable != 0)
-                    os << (p.monomials[i].coefficient >= 0 ? "+" : "") << p.monomials[i].coefficient << p.monomials[i].variable << "^" << p.monomials[i].power << " ";
-                else
-                    os << (p.monomials[i].coefficient >= 0 ? "+" : "") << p.monomials[i].coefficient << " ";
+                if(p.monomials[i].coefficient != 0) {
+                    if(p.monomials[i].variable != 0)
+                        os << (p.monomials[i].coefficient >= 0 ? "+" : "") << p.monomials[i].coefficient << p.monomials[i].variable << "^" << p.monomials[i].power << " ";
+                    else
+                        os << (p.monomials[i].coefficient >= 0 ? "+" : "") << p.monomials[i].coefficient << " ";
+                }
             }
             return os;
         } 
