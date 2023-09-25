@@ -32,8 +32,8 @@ class Polynomial {
             if(isNumeric(input) && stoi(input) > 0) {
                 terms = stoi(input);
                 // start to build up the polynomial
-                monomials = new Monomial[terms];
-                if(monomials == nullptr) {
+                this->monomials = new Monomial[terms];
+                if(this->monomials == nullptr) {
                     cout << "Memory is full.\n";
                     exit(137);
                 }
@@ -48,7 +48,13 @@ class Polynomial {
                         cout << "Variable symbol or 0 for coefficient only: ";
                         cin >> input;
                         if(input.compare("0") == 0) {
-                            monomials[i] = m;
+                            // check if already exists a term with the same variable (constant)
+                            int found = this->getMonomial(0, 0);
+                            if(found == -1) this->monomials[i] = m;
+                            else {
+                                // add to the term
+                                this->monomials[found].coefficient += m.coefficient;
+                            }
                         } else {
                             if(!isNumeric(input)) {
                                 m.variable = input[0];
@@ -56,7 +62,13 @@ class Polynomial {
                                 cin >> input;
                                 if(isNumeric(input)) {
                                     m.power = stod(input);
-                                    monomials[i] = m;
+                                    // check if already exists a term with the same variable and power
+                                    int found = this->getMonomial(m.variable, m.power);
+                                    if(found == -1) this->monomials[i] = m;
+                                    else {
+                                        // add to the term
+                                        this->monomials[found].coefficient += m.coefficient;
+                                    }
                                 } else {
                                     cout << "Invalid number.\n";
                                     goto buildpolynomial;
@@ -107,12 +119,12 @@ class Polynomial {
             return sum;
         }
 
-        /* Return true if a term with a certain `variable` already exist inside the polynomial */
-        bool getMonomial(const double variable) {
+        /* Return the index of a term with specific `variable` and power already exist inside the polynomial */
+        int getMonomial(const double variable, const double power) {
             for(int i = 0; i < terms; i++) {
-                if(monomials[i].variable == variable && monomials[i].coefficient != 0) return true;
+                if(monomials[i].variable == variable && monomials[i].coefficient != 0 && monomials[i].power == power) return i;
             }
-            return false;
+            return -1;
         }
 
         friend std::ostream &operator<<(std::ostream &os, Polynomial &p) {
@@ -146,7 +158,7 @@ class Polynomial {
                 i++;
                 for(int j = 0; j < b.terms; j++) {
                     // check if a term with a certain variable already exist inside a, otherwise add it to the sum
-                    if(!sum.getMonomial(b.monomials[j].variable)) {
+                    if(sum.getMonomial(b.monomials[j].variable, b.monomials[j].power) == -1) {
                         sum.monomials[i] = b.monomials[j];
                     }
                 }
@@ -161,7 +173,7 @@ class Polynomial {
                 i++;
                 for(int j = 0; j < a.terms; j++) {
                     // check if a term with a certain variable already exist inside b, otherwise add it to the sum
-                    if(!sum.getMonomial(a.monomials[j].variable)) {
+                    if(sum.getMonomial(a.monomials[j].variable, a.monomials[j].power) == -1) {
                         sum.monomials[i] = a.monomials[j];
                     }
                 }
@@ -174,7 +186,7 @@ class Polynomial {
 int main() {
     Polynomial p1 = Polynomial();
     Polynomial p2 = Polynomial();
-    cout << "Polynomial 1 insert: " << p1 << "\n";
+    cout << "\nPolynomial 1 insert: " << p1 << "\n";
     cout << "Polynomial 2 insert: " << p2 << "\n";
     Polynomial sum = p1+p2;
     cout << "Polynomial 1 + Polynomial 2 = " << sum << "\n";
