@@ -60,7 +60,8 @@ class LinkedList {
         }
 };
 
-/* Struct representing a Node of a Linked list with a pointer to the next element */
+/* Struct representing a Vertex of the Graph list with two pointers, the first pointing to 
+*  the next vertex of the list and the second pointing to all the edges or adjacent vertices */
 template <typename T>
 struct Vertex {
     T value;
@@ -90,7 +91,8 @@ class Graph {
             current->next = newVertex;
         }
 
-        /* Create a new edge linking a `from` vertex with a `to` vertex. It can be bidirectional if specified */
+        /* Create a new edge linking a `from` vertex with a `to` vertex. It can be
+        *  bidirectional if specified */
         void addEdge(T from, T to, bool bidirectional = false) {
             if(initial == nullptr) return;
             Vertex<T> *fromV = findVertex(from);

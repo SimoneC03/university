@@ -15,7 +15,7 @@ template <typename T>
 class BST {
     private:
     
-        /* Recursive method to insert a newNode after a given node. */
+        /* Recursive method to insert a `newNode` after a given node `n`. */
         void insertAfter(Node<T> *n, Node<T> *newNode) {
             if(n == nullptr || newNode == nullptr) return;
             if(newNode->value < n->value) {
@@ -40,7 +40,7 @@ class BST {
             if(newNode != nullptr) newNode->father = n->father;
         }
 
-        /* Recursively search a value after a node */
+        /* Recursively search a `value` after a node `n` */
         Node<T> *searchAfter(Node<T> *n, T value) {
             if(n == nullptr) return nullptr;
             if(value == n->value) return n;
