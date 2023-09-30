@@ -48,7 +48,7 @@ class Polynomial {
                         cout << "Variable symbol or 0 for coefficient only: ";
                         cin >> input;
                         if(input.compare("0") == 0) {
-                            // check if already exists a term with the same variable (constant)
+                            // check if a term with the same variable (constant) already exists
                             int found = this->getMonomial(0, 0);
                             if(found == -1) this->monomials[i] = m;
                             else {
@@ -62,7 +62,7 @@ class Polynomial {
                                 cin >> input;
                                 if(isNumeric(input)) {
                                     m.power = stod(input);
-                                    // check if already exists a term with the same variable and power
+                                    // check if a term with the same variable and power already exists 
                                     int found = this->getMonomial(m.variable, m.power);
                                     if(found == -1) this->monomials[i] = m;
                                     else {
@@ -119,7 +119,7 @@ class Polynomial {
             return sum;
         }
 
-        /* Return the index of a term with specific `variable` and power already exist inside the polynomial */
+        /* Return the index of a term with a specific `variable` and power if exists inside the polynomial */
         int getMonomial(const double variable, const double power) {
             for(int i = 0; i < terms; i++) {
                 if(monomials[i].variable == variable && monomials[i].coefficient != 0 && monomials[i].power == power) return i;
