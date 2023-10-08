@@ -45,8 +45,13 @@ int hashKey(const void *value, const char *valueType) {
  * @param keyType one of the supported key types: STRING or NUMBER */
 int hashIndex (HashMap *h, void *key, const char *keyType) {
     int i = hashKey(key, keyType) % h->size;
-    while (h->keys[i] && h->keys[i] != key)
-        i = (i + 1) % h->size;
+    if(strcmp(keyType, "STRING") == 0) {
+        while (h->keys[i] && strcmp(h->keys[i], key) != 0)
+            i = (i + 1) % h->size;
+    } else if(strcmp(keyType, "NUMBER") == 0) {
+        while (h->keys[i] && h->keys[i] != key)
+            i = (i + 1) % h->size;
+    }
     return i;
 }
 
