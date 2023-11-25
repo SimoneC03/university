@@ -1,13 +1,15 @@
 # Ignore all
 *
 
-# Unignore all with extensions
+# Unignore all files with extension
 !*.*
 
-# Unignore all dirs
+# Unignore all directories
 !*/
 
+# Ignore Object and Executable files
 *.o
 *.out
+*.exe
 
 .vscode
