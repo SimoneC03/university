@@ -179,7 +179,7 @@ int main() {
     g->addEdge(5, 4, false);
     cout << "Graph:\n";
     cout << g;
-    cout << "Removing vertex with 4 value\n";
+    cout << "Removing vertex with 4 value:\n";
     g->removeVertex(4);
     cout << g;
 }

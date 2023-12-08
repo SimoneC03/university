@@ -1,3 +1,4 @@
+/* Binary Search Tree implementation */
 #include <iostream>
 
 using std::cin, std::cout;
