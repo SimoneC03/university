@@ -53,6 +53,8 @@ public:
 
     /* Insert a new node `z` */
     void insertNode(Node<T> *z) {
+        if(z == nullptr) return;
+
         Node<T> *y = nullptr;
         Node<T> *x = root;
 
@@ -74,7 +76,8 @@ public:
         insertFixup(z);
     }
 
-    /* Recolor the tree after a new node insertion to keep all the RB trees properties valid */
+    /* Perform recolor and rotate operations on the tree after a new node 
+     * insertion to keep all the RB trees properties valid */
     void insertFixup(Node<T> *z) {
         while (z->p != nullptr && z->p->red) {
             if (z->p == z->p->p->left) {
@@ -144,13 +147,11 @@ public:
             yOriginalColor = y->red;
             x = y->right;
             
-            if (y->p == z) {
-                if (x != nullptr) x->p = y;
-            } else {
-                transplant(y, y->right);
+            if (y != z->right) {
+                if (x != nullptr) transplant(y, y->right);
                 y->right = z->right;
                 if (y->right != nullptr) y->right->p = y;
-            }
+            } else if (x != nullptr) x->p = y;
             transplant(z, y);
             y->left = z->left;
             if (y->left != nullptr) y->left->p = y;
@@ -162,8 +163,8 @@ public:
 
     /* Recolor the tree after a new node deletion to keep all the RB trees properties valid */
     void deleteFixup(Node<T> *x) {
-        while (x != root && !x->red) {
-            if (x == x->p->left) {
+        while (x != nullptr && x != root && !x->red) {
+            if (x->p != nullptr && x == x->p->left) {
                 Node<T> *w = x->p->right;
                 if (w->red) {
                     w->red = false;
