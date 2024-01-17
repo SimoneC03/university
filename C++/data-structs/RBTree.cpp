@@ -148,7 +148,7 @@ public:
             x = y->right;
             
             if (y != z->right) {
-                if (x != nullptr) transplant(y, y->right);
+                transplant(y, y->right);
                 y->right = z->right;
                 if (y->right != nullptr) y->right->p = y;
             } else if (x != nullptr) x->p = y;
@@ -298,8 +298,8 @@ int main() {
     cout << "RB Tree is:\n(preorder view)\n";
     cout << rb_tree;
     cout << "Removing 8 and 9 from the tree:\n(preorder view)\n";
-    rb_tree->remove(8);
-    rb_tree->remove(9);
+    rb_tree->remove(4);
+    rb_tree->remove(5);
     cout << rb_tree;
     return 0;
 }
