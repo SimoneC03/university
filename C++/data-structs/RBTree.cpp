@@ -148,7 +148,6 @@ public:
                 if (x != nullptr) x->p = y;
             } else {
                 transplant(y, y->right);
-                if (y->right != nullptr) y->right->p = y;
                 y->right = z->right;
                 if (y->right != nullptr) y->right->p = y;
             }
