@@ -28,15 +28,13 @@ bool replaceLine(char *filename, int row_index, char *s) {
     bool replaced = false;
     while(!feof(f)) {
         fscanf(f, "%d %s", &rowN, row);
+        // check if is the last row before enter new line
+        char *format = (feof(f)) ? "%d %s" : "%d %s\n";
         if(row_i == row_index) {
-            // check if is the last row before enter new line
-            if(feof(f)) fprintf(tempf, "%d %s", rowN, s);
-            else fprintf(tempf, "%d %s\n", rowN, s);
+            fprintf(tempf, format, rowN, s);
             replaced = true;
         } else {
-            // check if is the last row before enter new line
-            if(feof(f)) fprintf(tempf, "%d %s", rowN, row);
-            else fprintf(tempf, "%d %s\n", rowN, row);
+            fprintf(tempf, format, rowN, row);
         }
         row_i++;
     }
