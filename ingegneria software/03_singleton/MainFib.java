@@ -1,3 +1,7 @@
+/**
+ * This main class uses the Fib class implemented using the Singleton 
+ * creational design pattern
+ */
 public class MainFib {
     public static void main(String[] args) {
         Fib fib1 = Fib.getInstance();
