@@ -4,11 +4,11 @@ import java.awt.Container;
 
 public class Main {
     public static void main(String[] args) {
+        // Theme object (dark or light)
         AbstractFactory theme = new ConcreteFactoryDark();
 
-        Frame themeFrame = theme.getFrame();
-
         // Create a frame (window)
+        Frame themeFrame = theme.getFrame();
         JFrame frame = new JFrame(themeFrame.getText());
         Container c = frame.getContentPane();
         c.setBackground(themeFrame.getBackgroundColor());
