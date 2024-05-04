@@ -2,6 +2,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.Container;
 
+/*
+ * This class represents the Client that uses only interfaces declared by the AbstractFactory
+ * and AbstractProduct.
+ * 
+ * AbstractFactory is implemented by ConcreteFactoryDark and ConcreteFactoryLight classes
+ * which can be used to change theme colors
+ * 
+ * AbstractProduct has more implementations in different classes like Frame and Label.
+ */
+
 public class Main {
     public static void main(String[] args) {
         // Theme object (dark or light)
