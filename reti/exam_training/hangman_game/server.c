@@ -4,17 +4,27 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define PLAYERS_N 2 // Players number
 #define MAX_CHANCES_PER_PLAYER 3 // Max chances per player
 #define MAX_BUFFER_SIZE 200 // Max text size to send
 #define MAX_PLAYER_NAME 100
+#define MAX_WORD_SIZE 50
 
 typedef struct Client {
     char name[MAX_PLAYER_NAME];
     char ip[18];
     uint16_t port;
 } Client;
+
+char *getRandomWord() {
+    srand(time(NULL));
+    char words[5][MAX_WORD_SIZE] = {"choice", "advertising", "chocolate", "complication", "vegetable"};
+    char *r = malloc(MAX_WORD_SIZE);
+    strcpy(r, words[rand()%5]);
+    return r;
+}
 
 /* Send a message using an open socket and return the number of bytes successfully sent */
 ssize_t sendLine(int sockfd, char *mes, struct sockaddr_in dest_addr) {
@@ -79,6 +89,8 @@ int main(int argc, char **argv) {
         return -1;
     }
 
+    char *wordToGuess = getRandomWord();
+
     // infinite loop to keep listening for incoming requests
     for(;;) {
         // read and print bytes from incoming socket request
@@ -96,6 +108,7 @@ int main(int argc, char **argv) {
             // game has started
             if(canPlay(ip, port, users)) {
                 fputs(recline, stdout);
+                
                 sendLine(sockfd, "msg received\n", remote_addr);
             } else {
                 sendLine(sockfd, "You cannot join. The game has already started\n", remote_addr);
