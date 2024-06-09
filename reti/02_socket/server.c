@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
     // infinite loop to keep listening for incoming requests
     for(;;) {
         // read and print bytes from incoming socket request
-        recvfrom(sockfd, buffer, 99, 0, (struct sockaddr_in *)&remote_addr, len);
+        recvfrom(sockfd, buffer, 99, 0, (struct sockaddr *)&remote_addr, &len);
         printf("IP = %s, port = %d, MSG = %s\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port), buffer);
     }
 

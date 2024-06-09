@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     for(int i = 0; i < 10; i++) {
         sprintf(buffer, "%d", i);
         // send current buffer to destination address
-        sendto(sockfd, buffer, sizeof(buffer)+1, 0, (struct sockaddr_in *)&dest_addr, sizeof(dest_addr));
+        sendto(sockfd, buffer, sizeof(buffer)+1, 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
     }
 
     // close the socket connection
