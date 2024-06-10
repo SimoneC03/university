@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
+#include <unistd.h>
 #include <arpa/inet.h>
 
 #define MAX_PLAYER_NAME 100
@@ -38,18 +38,51 @@ int main(int argc, char **argv) {
     // IPv4 address family
     dest_addr.sin_family = AF_INET;
     // Convert address to binary network format
-    inet_pton(AF_INET, argv[1], &(dest_addr.sin_addr));
+    inet_pton(AF_INET, argv[1], &dest_addr.sin_addr);
     // Convert the port number from host byte order to network byte order
     dest_addr.sin_port = htons(atoi(argv[2]));
 
+    // send name to the server
     printf("Insert your name to enter a game (max 100 chars): ");
-    while(fgets(sendline, MAX_SENDLINE_SIZE, stdin) != NULL) {
-        sendto(sockfd, sendline, strlen(sendline), 0, (struct sockaddr *)&dest_addr, addr_len);
+    fgets(sendline, MAX_SENDLINE_SIZE, stdin);
+    sendto(sockfd, sendline, strlen(sendline), 0, (struct sockaddr *)&dest_addr, addr_len);
+
+    // wait for registration confirmation
+    memset(recline, 0, MAX_RECLINE_SIZE-1);
+    recbytes = recvfrom(sockfd, recline, MAX_RECLINE_SIZE-1, 0, (struct sockaddr *)&dest_addr, &addr_len);
+    recline[recbytes] = 0;
+    if(strcmp(recline, "registered") == 0) {
+        printf("Joined!\n");
+    } else {
+        fputs(recline, stdin);
+        return 0;
+    }
+
+    // wait for server istructions for playing
+    for(;;) {
+        memset(recline, 0, MAX_RECLINE_SIZE-1);
         recbytes = recvfrom(sockfd, recline, MAX_RECLINE_SIZE-1, 0, (struct sockaddr *)&dest_addr, &addr_len);
         recline[recbytes] = 0;
-        // exit from game
-        if(strcmp(sendline, "--exit\n") == 0) break;
+        // lost the game
+        if(strcmp(recline, "--exit\n") == 0) {
+            printf("You lost the game\n");
+            break;
+        }
+        printf("It's your turn.\n");
+        fputs(recline, stdout);
+        fgets(sendline, MAX_SENDLINE_SIZE, stdin);
 
+        sendto(sockfd, sendline, strlen(sendline), 0, (struct sockaddr *)&dest_addr, addr_len);
+        printf("You sent the %s: %s\n", (strlen(sendline) > 2) ? "word" : "letter", sendline);
+
+        memset(recline, 0, MAX_RECLINE_SIZE-1);
+        recbytes = recvfrom(sockfd, recline, MAX_RECLINE_SIZE-1, 0, (struct sockaddr *)&dest_addr, &addr_len);
+        recline[recbytes] = 0;
+        // lost the game
+        if(strcmp(recline, "--exit\n") == 0) {
+            printf("You lost the game\n");
+            break;
+        }
         fputs(recline, stdout);
     }
 
