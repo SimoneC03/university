@@ -14,7 +14,7 @@
 #include "server.h"
 
 /* Return if the game has over and no player has still available chances */
-short int isGameEnd(Client players[]) {
+short int isGameEnd(Player players[]) {
     short int res = 1; // init value: yes
     for(int i = 0; i < PLAYERS_N; i++) {
         if(players[i].chances != 0) res = 0;
@@ -37,18 +37,18 @@ ssize_t sendLine(int sockfd, char *mes, struct sockaddr_in dest_addr) {
     return sendto(sockfd, mes, strlen(mes), 0, (struct sockaddr *)&dest_addr, sizeof(struct sockaddr_in));
 }
 
-/* Return the index of the client with the given info inside the `players` 
+/* Return the index of the Player with the given info inside the `players` 
  * array if it has been registered, otherwise return -1 */
-int getPlayerIndex(in_addr_t ip, in_port_t port, Client players[]) {
+int getPlayerIndex(in_addr_t ip, in_port_t port, Player players[]) {
     for(int i = 0; i < PLAYERS_N; i++) {
         if(players[i].ip == ip && players[i].port == port) return i;
     }
     return -1;
 }
 
-/* Return NULL if the client with the given info can enter the game, otherwise
+/* Return NULL if the Player with the given info can enter the game, otherwise
  * return the error message */
-char *canJoin(in_addr_t ip, char *name, in_port_t port, Client players[]) {
+char *canJoin(in_addr_t ip, char *name, in_port_t port, Player players[]) {
     char *res = malloc(100);
     strcpy(res, "The lobby is full. Please wait until the next game.\n");
     for(int i = 0; i < PLAYERS_N; i++) {
@@ -89,14 +89,14 @@ int main(int argc, char **argv) {
     struct sockaddr_in local_addr, remote_addr;
     socklen_t remoteaddr_len = sizeof(struct sockaddr_in);
 
-    // Text received from the clients
+    // Text received from the players
     char buffer[MAX_BUFFER_SIZE];
     int recbytes = 0;
 
     // Socket descriptor
     int sockfd;
 
-    Client players[PLAYERS_N];
+    Player players[PLAYERS_N];
     int players_len = 0; // Joined players counter
     int turn = -1; // index of the current player
 
@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
         char *check = canJoin(remote_addr.sin_addr.s_addr, buffer, remote_addr.sin_port, players);
         if(check == NULL) {
             // register new player
-            memset(&players[players_len], 0, sizeof(Client));
+            memset(&players[players_len], 0, sizeof(Player));
             players[players_len].ip = remote_addr.sin_addr.s_addr;
             strcpy(players[players_len].name, buffer);
             players[players_len].port = remote_addr.sin_port;
@@ -180,7 +180,7 @@ int main(int argc, char **argv) {
         if(check == turn) {
             // received buffer contains also the new line char at the end
             if(strlen(buffer) > 2) {
-                // client try to guess the word
+                // Player try to guess the word
                 // remove from buffer the new line char
                 buffer[strlen(buffer)-1] = '\0';
                 if(strcmp(buffer, word_to_guess) == 0) {
@@ -200,7 +200,7 @@ int main(int argc, char **argv) {
                     sendLine(sockfd, "Wrong word\n", remote_addr);
                 }
             } else {
-                // client try to guess a letter
+                // Player try to guess a letter
                 if(strchr(word_to_guess, buffer[0])) {
                     // letter guessed
                     sendLine(sockfd, "Letter guessed!\n", remote_addr);
