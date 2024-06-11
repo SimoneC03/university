@@ -212,11 +212,26 @@ int main(int argc, char **argv) {
                     sendLine(sockfd, "Wrong letter\n", remote_addr);
                 }
             }
-            // check if player has lost the game
+            // check if player has lost or won the game
             if(players[turn].chances == 0) {
                 printf("Player %s has lost\n", players[turn].name);
                 // send disconnection signal
                 sendLine(sockfd, "--exit\n", remote_addr);
+            } else {
+                char *strct = getWordStructure(word_to_guess, letters);
+                if(strchr(strct, '_') == NULL) {
+                    memset(buffer, 0, MAX_BUFFER_SIZE-1);
+                    sprintf(buffer, "The word was %s\nPlayer %s has won the game!\n", word_to_guess, players[turn].name);
+                    for(int i = 0; i < players_len; i++) {
+                        remote_addr.sin_addr.s_addr = players[i].ip;
+                        remote_addr.sin_port = players[i].port;
+                        sendLine(sockfd, buffer, remote_addr);
+                    }
+                    printf("Player %s has won the game\n", players[turn].name);
+                    free(strct);
+                    break;
+                }
+                free(strct);
             }
         } else if(check != -1){
             sendLine(sockfd, "You cannot play. Wait your turn\n", remote_addr);
