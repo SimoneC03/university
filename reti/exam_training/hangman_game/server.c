@@ -202,10 +202,16 @@ int main(int argc, char **argv) {
             } else {
                 // Player try to guess a letter
                 if(strchr(word_to_guess, buffer[0])) {
-                    // letter guessed
-                    sendLine(sockfd, "Letter guessed!\n", remote_addr);
-                    found_letters++;
-                    letters[found_letters-1] = buffer[0];
+                    if(strchr(letters, buffer[0])) {
+                        // letter already guessed before
+                        players[turn].chances--;
+                        sendLine(sockfd, "Letter already guessed!\n", remote_addr);
+                    } else {
+                        // letter guessed
+                        sendLine(sockfd, "Letter guessed!\n", remote_addr);
+                        found_letters++;
+                        letters[found_letters-1] = buffer[0];
+                    }
                 } else {
                     // wrong letter
                     players[turn].chances--;
