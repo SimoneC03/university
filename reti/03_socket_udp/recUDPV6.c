@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 int main(int argc, char **argv) {
     int sockfd, received_bytes = 0;
@@ -44,6 +45,7 @@ int main(int argc, char **argv) {
         }
     }
 
+    close(sockfd);
 
     return 0;
 }
