@@ -36,15 +36,14 @@ int main(int argc, char **argv) {
     }
     printf("Server connection estabilished\n");
 
-    char option = 'c';
-    while(option == 'c') {
-        memset(recline, 0, MAX_BUFFER_SIZE);
-        memset(sendline, 0, MAX_BUFFER_SIZE);
+    do {
         // receive products list
+        memset(recline, 0, MAX_BUFFER_SIZE);
         received_bytes = recv(sockfd, recline, MAX_BUFFER_SIZE, 0);
         recline[received_bytes] = 0;
         fputs(recline, stdout);
-        printf("Please, insert a product ID and quantity\n");
+        printf("Please, insert a product ID and quantity (<id>, <qty>)\n");
+        memset(sendline, 0, MAX_BUFFER_SIZE);
         fgets(sendline, MAX_BUFFER_SIZE, stdin);
         // send product and its quantity
         send(sockfd, sendline, MAX_BUFFER_SIZE, 0);
@@ -53,9 +52,12 @@ int main(int argc, char **argv) {
         recline[received_bytes] = 0;
         printf("Server has returned the product:\n%s\n", recline);
         printf("press q to quit, c to continue\n");
-        scanf("%c", &option);
-        send(sockfd, &option, MAX_BUFFER_SIZE, 0);
-    }
+        memset(sendline, 0, MAX_BUFFER_SIZE);
+        fgets(sendline, 2, stdin);
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {}
+        send(sockfd, sendline, MAX_BUFFER_SIZE, 0);
+    } while(sendline[0] == 'c');
 
     send(sockfd, "end", MAX_BUFFER_SIZE, 0);
     close(sockfd);

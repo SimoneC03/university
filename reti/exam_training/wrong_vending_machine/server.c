@@ -18,8 +18,10 @@ typedef struct Product {
 
 char *getProducts(Product *products) {
     char *res = malloc(MAX_BUFFER_SIZE);
+    res[0] = 0;
     for(int i = 0; i < MAX_PRODUCTS; i++) {
         char *line = malloc((MAX_BUFFER_SIZE/MAX_PRODUCTS)-1);
+        line[0] = 0;
         sprintf(line, "%d, %s, %f, %d\n", products[i].id, products[i].name, products[i].price, products[i].qty);
         strcat(res, line);
     }
@@ -73,18 +75,23 @@ int main(int argc, char **argv) {
             close(sockfd);
 
             for(;;) {
-                printf("Sending products list\n");
+               
                 char *prod_list = getProducts(products);
+                printf("Sending products list to a client.\n");
                 if((send(newsockfd, prod_list, MAX_BUFFER_SIZE, 0)) < 1) {
                     printf("Error while sending products list\n");
+                    free(prod_list);
+                    close(newsockfd);
                     return -1;
                 }
+                free(prod_list);
 
                 memset(recline, 0, MAX_BUFFER_SIZE);
                 received_bytes = recv(newsockfd, recline, MAX_BUFFER_SIZE, 0);
                 recline[received_bytes] = 0;
                 if(strcmp(recline, "end") == 0) {
                     printf("End of communication\n");
+                    close(newsockfd);
                     return -1;
                 } else {
                     printf("Chosen from the client: %s\n", recline);
@@ -112,11 +119,11 @@ int main(int argc, char **argv) {
 
                     // wait for client option (continue to buy or end communication)
                     memset(recline, 0, MAX_BUFFER_SIZE);
-                    printf("witing for continue or end communication\n");
                     received_bytes = recv(newsockfd, recline, MAX_BUFFER_SIZE, 0);
                     recline[received_bytes-2] = 0;
-                    printf("client pressed %c\n", recline[0]);
                     if(recline[0] != 'c') {
+                        printf("Client %s:%d\n has ended communication\n", ipv6_addr, ntohs(remote_addr.sin6_port));
+                        close(newsockfd);
                         return -1;
                     } 
                 }
