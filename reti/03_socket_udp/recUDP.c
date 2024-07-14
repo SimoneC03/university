@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    if((sockfd = socket(AF_INET, SOCK_DGRAM, 0) < 0)) {
+    if((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         printf("Error occurred while opening socket\n");
         return -1;
     }
