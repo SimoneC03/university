@@ -133,6 +133,44 @@ int main(int argc, char **argv) {
                             send(newsockfd, "Operation confirmed\n", 50, 0);
                         }                        
                     } else send(newsockfd, "Operation canceled\n", 50, 0);
+                } else if(msg[0] == '2') {
+                    // Return one/more clothes
+                    received_bytes = recv(newsockfd, msg, MAX_BUFFER_SIZE, 0);
+                    msg[received_bytes] = 0;
+                    // read requested dresses
+                    Dress requested_dresses[DRESSES_N];
+                    for(int i = 0; i < DRESSES_N; i++) requested_dresses[i].name[0] = 0;
+                    char *requested = strtok(msg, ",");
+                    while (requested != NULL) {
+                        int id, qty;
+                        sscanf(requested, "%d-%d", &id, &qty);
+                        for(int i = 0; i < DRESSES_N; i++) {
+                            if(i == id-1) {
+                                strcpy(requested_dresses[i].name, dresses[i].name);
+                                requested_dresses[i].price = dresses[i].price;
+                                requested_dresses[i].qty = qty;
+                                strcpy(requested_dresses[i].size, dresses[i].size);
+                            }
+                        }
+                        requested = strtok(NULL, ",");
+                    }
+                    memset(msg, 0, MAX_BUFFER_SIZE);
+                    strcpy(msg, "Articles to return:\n");
+                    char *rdresses = getDresses(requested_dresses);
+                    strcat(msg, rdresses);
+                    strcat(msg, "Are you sure you want to confirm the operation?\n");
+                    free(rdresses);
+                    send(newsockfd, msg, MAX_BUFFER_SIZE, 0);
+                    received_bytes = recv(newsockfd, msg, MAX_BUFFER_SIZE, 0);
+                    msg[received_bytes] = 0;
+                    if(strcmp(msg, "Yes\n") == 0) {
+                        for(int i = 0; i < DRESSES_N; i++) {
+                            fflush(stdout);
+                            if(strlen(requested_dresses[i].name) > 0) {
+                                dresses[i].qty += requested_dresses[i].qty;}
+                        }
+                        send(newsockfd, "Operation confirmed\n", 50, 0);               
+                    } else send(newsockfd, "Operation canceled\n", 50, 0);
                 }
             }
         } else {

@@ -57,6 +57,22 @@ int main(int argc, char **argv) {
             received_bytes = recv(sockfd, recvline, MAX_BUFFER_SIZE, 0);
             recvline[received_bytes] = 0;
             printf("%s", recvline);
+        } else if(sendline[0] == '2') {
+            printf("Insert the article id and quantity to return (<id1>-<qty1>,<id2>-<qty2>,...): ");
+            memset(sendline, 0, MAX_BUFFER_SIZE);
+            fgets(sendline, MAX_BUFFER_SIZE, stdin);
+            send(sockfd, sendline, strlen(sendline), 0);
+            memset(recvline, 0, MAX_BUFFER_SIZE);
+            received_bytes = recv(sockfd, recvline, MAX_BUFFER_SIZE, 0);
+            recvline[received_bytes] = 0;
+            printf("%s", recvline);
+            memset(sendline, 0, MAX_BUFFER_SIZE);
+            fgets(sendline, MAX_BUFFER_SIZE, stdin);
+            send(sockfd, sendline, strlen(sendline), 0);
+            memset(recvline, 0, MAX_BUFFER_SIZE);
+            received_bytes = recv(sockfd, recvline, MAX_BUFFER_SIZE, 0);
+            recvline[received_bytes] = 0;
+            printf("%s", recvline);
         }
     }
 
