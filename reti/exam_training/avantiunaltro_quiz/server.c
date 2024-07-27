@@ -10,7 +10,6 @@
 #define MAX_BUFFER_SIZE 1000
 
 int senddata(int sockfd, char *str) {
-    printf("Sending %ld bytes of data\n", strlen(str));
     return send(sockfd, str, strlen(str), 0);
 }
 
@@ -87,12 +86,13 @@ int main(int argc, char **argv) {
                             return 0;
                         } else {
                             senddata(newsockfd, "Risposta sbagliata\n");
+                            received_bytes = recv(newsockfd, msg, MAX_BUFFER_SIZE-1, 0);
+                            msg[received_bytes] = 0;
                             goto ask_questions;
                         }
                     } else {
                         senddata(newsockfd, "Giusto, prossima domanda\n");
                     }
-                    memset(msg, 0, sizeof(msg));
                     received_bytes = recv(newsockfd, msg, MAX_BUFFER_SIZE-1, 0);
                     msg[received_bytes] = 0;
                 }

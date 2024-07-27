@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
         memset(recline, 0, sizeof(recline));
         received_bytes = recv(sockfd, recline, MAX_BUFFER_SIZE-1, 0);
         recline[received_bytes] = 0;
-        printf("%s (%d bytes)", recline, received_bytes);
+        printf("%s", recline, received_bytes);
         // check if it has not won yet
         if(strstr(recline, "Congratulazioni") != NULL && strchr(recline, '?') == NULL) return 0;
         fgets(sendline, MAX_BUFFER_SIZE-1, stdin);
