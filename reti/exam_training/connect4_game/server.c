@@ -43,6 +43,36 @@ short int fillMatrix(int matrix[6][7], int column, int turn) {
     return 0;
 }
 
+short int checkWinnerHorizontal(int matrix[6][7]) {
+    for(int i = 0; i < 6; i++) {
+        for(int j = 0; j < 4; j++) {
+            int c = 0;
+            for(int k = 0; k < 4; k++) {
+                if(matrix[i][k+j] != -1 && matrix[i][k+j] == matrix[i][j]) c++;
+            }
+            if(c == 4) return 1;
+        }
+    }
+    return 0;
+}
+
+short int checkWinnerVertical(int matrix[6][7]) {
+    for(int j = 0; j < 7; j++) {
+        for(int i = 0; i < 3; i++) {
+            int c = 0;
+            for(int k = 0; k < 4; k++) {
+                if(matrix[k+i][j] != -1 && matrix[k+i][j] == matrix[i][j]) c++;
+            }
+            if(c == 4) return 1;
+        }
+    }
+    return 0;
+}
+
+short int checkWinner(int matrix[6][7]) {
+    return (checkWinnerVertical(matrix)==1 || checkWinnerHorizontal(matrix)==1) ? 1 : 0;
+}
+
 int main(int argc, char **argv) {
     int sockfd;
     struct sockaddr_in local_addr, remote_addr;
@@ -81,6 +111,11 @@ int main(int argc, char **argv) {
 
     for(;;) {
         memset(msg, 0, sizeof(msg));
+        if(checkWinner(matrix) == 1) {
+            sprintf(msg, "Player %d won the game!\n", (turn+1)%2);
+            sendbroadcast(sockfd, msg, players);
+            return 1;
+        }
         char *m = getMatrix(matrix);
         sprintf(msg, "It's your turn\n%s\nWhich column do you choose? ", m);
         sendto(sockfd, msg, strlen(msg), 0, (struct sockaddr *)&players[turn].addr, len);

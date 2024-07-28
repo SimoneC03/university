@@ -43,6 +43,7 @@ int main(int argc, char **argv) {
         received_bytes = recvfrom(sockfd, recline, MAX_BUFFER_SIZE-1, 0, (struct sockaddr *)&remote_addr, &len);
         recline[received_bytes] = 0;
         printf("%s", recline);
+        if(strstr(recline, "won") != NULL) return 1;
         memset(sendline, 0, MAX_BUFFER_SIZE);
         send_col:
         fgets(sendline, MAX_BUFFER_SIZE-1, stdin);
