@@ -47,6 +47,7 @@ int main(int argc, char **argv) {
 
     for(;;) {
         newsockfd = accept(sockfd, (struct sockaddr *)&remote_addr, &s_len);
+        printf("new connection received\n");
         int pid = fork();
         if(pid == 0) {
             close(sockfd);
@@ -58,7 +59,6 @@ int main(int argc, char **argv) {
             strcpy(company_name, msg);
 
             for(;;) {
-                printf("sent mednu\n");
                 senddata(newsockfd, "0 - List all of your registered products\n1 - Register a new product\n2 - Edit a product\n3 - End connection\n");
                 memset(msg, 0, sizeof(msg));
                 received_bytes = recv(newsockfd, msg, MAX_BUFFER_SIZE-1, 0);
@@ -119,6 +119,35 @@ int main(int argc, char **argv) {
                     if(n > 0) senddata(newsockfd, "Product registered correctly\n");
                     else senddata(newsockfd, "Error while registering new product\n");
                     fclose(f);
+                } else if(msg[0] == '2') {
+                    senddata(newsockfd, "Please, insert the id of the item to update e the new quantity like <item_id>;<new_qty>\n");
+                    memset(msg, 0, sizeof(msg));
+                    received_bytes = recv(newsockfd, msg, MAX_BUFFER_SIZE-1, 0);
+                    msg[received_bytes] = 0;
+                    char *part = strtok(msg, ";");
+                    size_t id_to_update = atoi(part);
+                    part = strtok(NULL, ";");
+                    int new_qty = atoi(part);
+                    Item toUpdate;
+                    FILE *f = fopen("wines.dat", "rb+");
+                    fseek(f, 0, SEEK_SET);
+                    short int found = -1;
+                    while (fread(&toUpdate, sizeof(Item), 1, f) > 0) {
+                        if(toUpdate.id == id_to_update) {
+                            fseek(f, -sizeof(Item), SEEK_CUR);
+                            toUpdate.qty = new_qty;
+                            fwrite(&toUpdate, sizeof(Item), 1, f);
+                            found = 1;
+                            break;
+                        }
+                    }
+                    fclose(f);
+                    if(found == -1) senddata(newsockfd, "Item was not found\n");
+                    else senddata(newsockfd, "Item updated successfully\n");
+                    // receive confirmation received
+                    memset(msg, 0, sizeof(msg));
+                    received_bytes = recv(newsockfd, msg, MAX_BUFFER_SIZE-1, 0);
+                    msg[received_bytes] = 0;
                 }
             }
         } else {

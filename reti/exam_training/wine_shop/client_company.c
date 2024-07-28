@@ -71,6 +71,19 @@ int main(int argc, char **argv) {
             received_bytes = recv(sockfd, recline, MAX_BUFFER_SIZE-1, 0);
             recline[received_bytes] = 0;
             printf("%s", recline);
+        } else if(sendline[0] == '2') {
+            memset(recline, 0, MAX_BUFFER_SIZE);
+            received_bytes = recv(sockfd, recline, MAX_BUFFER_SIZE-1, 0);
+            recline[received_bytes] = 0;
+            printf("%s", recline);
+            fgets(sendline, MAX_BUFFER_SIZE-1, stdin);
+            senddata(sockfd, sendline);
+            memset(recline, 0, MAX_BUFFER_SIZE);
+            received_bytes = recv(sockfd, recline, MAX_BUFFER_SIZE-1, 0);
+            recline[received_bytes] = 0;
+            printf("%s", recline);
+            // send confirmation received
+            senddata(sockfd, "received");
         }
     }
 
